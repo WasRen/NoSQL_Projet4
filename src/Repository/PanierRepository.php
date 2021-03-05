@@ -21,10 +21,32 @@ class PanierRepository extends ServiceEntityRepository
         parent::__construct($registry, Panier::class);
     }
 
-    public function callRedis($MovieId, $id) {
-        $redis = new Predis\Client();
-        $redis->rpush("panier-user".$id, $MovieId);
-        return null;
+    public function callRedis($id, $MovieId) {
+        $redis = new Predis\Client(array(
+            "scheme" => "tcp",
+            "host" => "localhost",
+            "port" => 6379,
+            "password"=>""
+        ));
+        
+
+        if ($redis){
+            
+            $data = serialize($MovieId);
+            
+            $redis->rpush("panier-user".$id , $data);
+            $response = $redis->lrange("panier-user".$id, 0, -1);
+            
+            //$redis->del("panier-userTest".$id); SUPPRIMER DES CHOSES
+            
+            
+            
+        }else{
+            $response = false;
+        }
+
+
+        return $response;
     }
 
     // /**

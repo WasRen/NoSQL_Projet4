@@ -29,15 +29,17 @@ class PanierController extends AbstractController
     }
 
     /**
-     *  @Route("/test", name="afficher_panier", methods={"GET"})
+     *  @Route("/test", name="afficher_panier")
      */
     public function test(PanierRepository $panierRepository): Response
     {
         $movie = new Movie();
         $movie->setMovieId(1);
-        return $this->render('panier/index.html.twig', [
-            'panier' => $panierRepository->callRedis($movie->getMovieId(), $this->getUser()->getId()),
-        ]);
+        $call = $panierRepository->callRedis($this->getUser()->getId() , $movie->getMovieid());
+
+        return new Response();
+
+        
     }
 
     /**
