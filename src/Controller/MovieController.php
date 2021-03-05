@@ -20,8 +20,17 @@ class MovieController extends AbstractController
      */
     public function index(MovieRepository $movieRepository): Response
     {
+        $data = '{
+            "size" : 100,
+            "query": {
+                "match_all" : {}
+            }
+        }';
+
+        $headers = array("Content-Type: application/json", "Content-Length: " . strlen($data));
+
         return $this->render('movie/index.html.twig', [
-            'movies' => $movieRepository->callAPI("GET", "http://localhost:9200/movies/_doc/_search"),
+            'movies' => $movieRepository->callAPI("GET", "http://localhost:9200/movies/_doc/_search", $headers, $data),
         ]);
     }
 
@@ -30,18 +39,34 @@ class MovieController extends AbstractController
      */
     public function publish(MovieRepository $movieRepository) : Response {
 
+        // $fileReader = fopen(__DIR__."/MOVIE_DB.txt", 'r');
+        // $file_correct = fopen(__DIR__. "/MOVIE_DB_correct.txt", 'w');
+        // $i = 1;
+        // var_dump("HELLLOO");
+        // // var_dump(json_decode($fileReader));
+        // while (($line = fgets($fileReader)) !== false) {
+        //     $index = '{ "index": { "_id": '.$i.'}}';
+        //     var_dump($index);
+        //     fwrite($file_correct, $index . "\n");
+        //     fwrite($file_correct, $line);
+        //     $i++;
+        // }
 
-
-
-        $file = fopen(__DIR__.'/MOVIE_DB.txt','r');
-        while (!feof($file)){
-            $line = fgets($file);
-            $movieRepository->postJSON("http://localhost:9200/movies/_doc", $line, "private-rm4kxe3md3juzetgko8qw3sn");
-
-            //$movieRepository->postJSON("http://localhost:9200/movies/_doc/_search", $line, "private-rm4kxe3md3juzetgko8qw3sn");
-            // sleep(1);
-        }
+        // fclose($fileReader);
+        // fclose($file_correct);
+        // file_put_contents(__DIR__."/MOVIE_DB_correct.json", json_encode($file));
         
+        // return $this->index($movieRepository);
+
+        // $file = fopen(__DIR__.'/MOVIE_DB.txt','r');
+        // while (!feof($file)){
+        //     $line = fgets($file);
+        //     $movieRepository->postJSON("http://localhost:9200/movies/_doc", $line, "private-rm4kxe3md3juzetgko8qw3sn");
+        //     sleep(2);
+
+        //     //$movieRepository->postJSON("http://localhost:9200/movies/_doc/_search", $line, "private-rm4kxe3md3juzetgko8qw3sn");
+        //     // sleep(1);
+        // }
         
         return $this->index($movieRepository);
     }
@@ -70,14 +95,25 @@ class MovieController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="movie_show", methods={"GET"})
+     * @Route("/{movieid}", name="movie_show", methods={"GET"})
      */
-    // public function show(Movie $movie): Response
-    // {
-    //     return $this->render('movie/show.html.twig', [
-    //         'movie' => $movie,
-    //     ]);
-    // }
+    public function show($movieid, MovieRepository $movieRepository): Response
+    {
+        $data = '{
+            "query" : {
+                "match": {
+                    "movieid" : "'. $movieid . '"
+                }
+            }
+        }';
+
+        $headers = array("Content-Type: application/json", "Content-Length: " . strlen($data));
+        $movie = $movieRepository->callAPI("GET", "http://localhost:9200/movies/_doc/_search", $headers, $data);
+
+        return $this->render('movie/show.html.twig', [
+            'movie' => $movie['hits']['hits'][0]['_source'],
+        ]);
+    }
 
     /**
      * @Route("/{id}/edit", name="movie_edit", methods={"GET","POST"})
