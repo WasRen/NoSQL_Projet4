@@ -3,12 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Panier;
+use App\Entity\Movie;
 use App\Form\PanierType;
 use App\Repository\PanierRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use AppBundle\Util\RedisHelper;
+use RedisException;
 
 /**
  * @Route("/panier")
@@ -22,6 +25,18 @@ class PanierController extends AbstractController
     {
         return $this->render('panier/index.html.twig', [
             'paniers' => $panierRepository->findAll(),
+        ]);
+    }
+
+    /**
+     *  @Route("/test", name="afficher_panier", methods={"GET"})
+     */
+    public function test(PanierRepository $panierRepository): Response
+    {
+        $movie = new Movie();
+        $movie->setMovieId(1);
+        return $this->render('panier/index.html.twig', [
+            'panier' => $panierRepository->callRedis($movie->getMovieId(), $this->getUser()->getId()),
         ]);
     }
 

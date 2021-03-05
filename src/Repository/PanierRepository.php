@@ -5,7 +5,8 @@ namespace App\Repository;
 use App\Entity\Panier;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Cache\Adapter\RedisAdapter;
+use App\Entity\Movie;
+use Predis;
 
 /**
  * @method Panier|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,10 +21,10 @@ class PanierRepository extends ServiceEntityRepository
         parent::__construct($registry, Panier::class);
     }
 
-    public function callRedis() {
-        $client = RedisAdapter::createConnection(
-            'redis://localhost:6379'
-        );
+    public function callRedis($MovieId, $id) {
+        $redis = new Predis\Client();
+        $redis->rpush("panier-user".$id, $MovieId);
+        return null;
     }
 
     // /**
