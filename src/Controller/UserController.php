@@ -53,6 +53,7 @@ class UserController extends AbstractController
      */
     public function show(User $user): Response
     {
+        dump("hello");
         return $this->render('user/show.html.twig', [
             'user' => $user,
         ]);
@@ -65,7 +66,7 @@ class UserController extends AbstractController
     {
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
-
+        
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
