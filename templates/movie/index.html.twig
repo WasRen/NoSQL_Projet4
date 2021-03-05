@@ -4,6 +4,7 @@
 
 {% block body %}
     <h1>Movie index</h1>
+<<<<<<< HEAD
 
     <table class="table">
         <thead>
@@ -21,6 +22,37 @@
                 <td>
                     <a href="{{ path('movie_show', {'id': movie.id}) }}">show</a>
                     <a href="{{ path('movie_edit', {'id': movie.id}) }}">edit</a>
+=======
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Movieid</th>
+                <th>Movie Title </th>
+                <th> Actions <th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for movie in movies.hits.hits %}
+            <tr>
+                <td>{{ movie._source.movieid }}</td>
+                <td>
+                    <div class= "row justify-content-center">
+                        {{movie._source.title}}
+                    </div>
+                </td>
+                <td>
+                    <div class="row justify-content-center">
+                        <div class="md-5">
+                            <button type="button" onclick="location.href='{{ path('movie_show', {'movieid' : movie._source.movieid}) }}'" class="btn btn-primary btn-lg" style="color:#3B4CCA; ">Detail</button>
+                        </div>
+                        <div class="md-2">
+
+                        </div>
+                        <div class="md-5">
+                            <button type="button" onclick="location.href='{{ path('movie_index')}}'" class="btn btn-primary btn-lg" style="color:#3B4CCA;" >Editer</button>
+                        </div>
+                    </div>
+>>>>>>> master
                 </td>
             </tr>
         {% else %}
@@ -30,6 +62,9 @@
         {% endfor %}
         </tbody>
     </table>
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
     <a href="{{ path('movie_new') }}">Create new</a>
 {% endblock %}
