@@ -8,6 +8,8 @@
 /public/bundles/
 /var/
 /vendor/
+/composer.json
+/composer.lock  
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###
