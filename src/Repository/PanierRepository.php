@@ -33,7 +33,7 @@ class PanierRepository extends ServiceEntityRepository
         if ($redis){
 
             $data = serialize($MovieId);
-            
+                                                                        // Ajouter IF Vérif pour delete et l'ajout
             $redis->rpush("panier-user".$id , $data);
             $response = $redis->lrange("panier-user".$id, 0, -1);
 

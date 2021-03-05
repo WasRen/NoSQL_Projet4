@@ -33,7 +33,7 @@ class PanierController extends AbstractController
      */
     public function test(PanierRepository $panierRepository): Response
     {
-        $movie = new Movie();
+        $movie = new Movie(); // importer les movies 
         $movie->setMovieId(1);
         $call = $panierRepository->callRedis($this->getUser()->getId() , $movie->getMovieid());
 
