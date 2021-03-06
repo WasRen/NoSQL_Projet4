@@ -23,9 +23,20 @@ class PanierController extends AbstractController
      */
     public function index(PanierRepository $panierRepository): Response
     {
-        return $this->render('panier/index.html.twig', [
-            'paniers' => $panierRepository->findAll(),
-        ]);
+        $response = $panierRepository->getCart($this->getUser()->getId());
+        if ($response) 
+        {
+            $panier_items = array();
+            foreach ($response as $key => $value)
+            {
+                $value = json_decode($value, true);
+                $panier_items[$key] = $value;
+            }
+            return $this->render('panier/index.html.twig', [
+                'panier_items' => $panier_items,
+            ]);
+        }
+        return $this->render('panier/empty.html.twig');   
     }
 
     /**
@@ -33,11 +44,31 @@ class PanierController extends AbstractController
      */
     public function test(PanierRepository $panierRepository): Response
     {
+        $panierRepository->callRedis();
         $movie = new Movie(); // importer les movies 
         $movie->setMovieId(1);
-        $call = $panierRepository->callRedis($this->getUser()->getId(), $movie->getMovieid());
-
-        return new Response();
+        $movie->setMovietitle("testNom");
+        $panierRepository->addToCart($this->getUser()->getId(), $movie->getMovieid(), $movie->getMovietitle());
+        $movie2 = new Movie(); // importer les movies 
+        $movie2->setMovieId(2);
+        $movie2->setMovietitle("testNom2");
+        $panierRepository->addToCart($this->getUser()->getId(), $movie2->getMovieid(), $movie2->getMovietitle());
+        $call = $panierRepository->getCart($this->getUser()->getId());
+        $res = array();
+        // foreach ($call as $key => $value)
+        // {
+        //     $value = json_decode($value, true);
+        //     $res[$key] = $value;
+        // }
+        $panier_items = array();
+            foreach ($call as $key => $value)
+            {
+                $value = json_decode($value, true);
+                $panier_items[$key] = $value;
+            }
+            return $this->render('panier/index.html.twig', [
+                'panier_items' => $panier_items,
+            ]);
 
         
     }
