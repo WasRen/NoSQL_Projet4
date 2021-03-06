@@ -23,21 +23,70 @@ class PanierController extends AbstractController
      */
     public function index(PanierRepository $panierRepository): Response
     {
+        $panier_items = array();
+        $response = $panierRepository->getCart($this->getUser()->getId());
+        if ($response) 
+        {
+            foreach ($response as $key => $value)
+            {
+                $value = json_decode($value, true);
+                $panier_items[$key] = $value;
+            }
+        }
         return $this->render('panier/index.html.twig', [
-            'paniers' => $panierRepository->findAll(),
+            'panier_items' => $panier_items,
         ]);
     }
+
+    /**
+     * @Route("/incr/{movie_id}", name="panier_incr", methods={"GET", "POST"})
+     */
+    public function cartIncr(PanierRepository $panierRepository, $movie_id): Response
+    {
+        $panierRepository->incrQuantity($this->getUser()->getId(), $movie_id);
+        return $this->redirectToRoute('panier_index');
+    }
+
+    /**
+     * @Route("/decr/{movie_id}", name="panier_decr", methods={"GET", "POST"})
+     */
+    public function cartDecr(PanierRepository $panierRepository, $movie_id): Response
+    {
+        $panierRepository->decrQuantity($this->getUser()->getId(), $movie_id);
+        return $this->redirectToRoute('panier_index');
+    }
+
 
     /**
      *  @Route("/test", name="afficher_panier")
      */
     public function test(PanierRepository $panierRepository): Response
     {
+        $panierRepository->callRedis();
         $movie = new Movie(); // importer les movies 
         $movie->setMovieId(1);
-        $call = $panierRepository->callRedis($this->getUser()->getId(), $movie->getMovieid());
-
-        return new Response();
+        $movie->setMovietitle("testNom");
+        $panierRepository->addToCart($this->getUser()->getId(), $movie->getMovieid(), $movie->getMovietitle());
+        $movie2 = new Movie(); // importer les movies 
+        $movie2->setMovieId(2);
+        $movie2->setMovietitle("testNom2");
+        $panierRepository->addToCart($this->getUser()->getId(), $movie2->getMovieid(), $movie2->getMovietitle());
+        $call = $panierRepository->getCart($this->getUser()->getId());
+        $res = array();
+        // foreach ($call as $key => $value)
+        // {
+        //     $value = json_decode($value, true);
+        //     $res[$key] = $value;
+        // }
+        $panier_items = array();
+            foreach ($call as $key => $value)
+            {
+                $value = json_decode($value, true);
+                $panier_items[$key] = $value;
+            }
+            return $this->render('panier/index.html.twig', [
+                'panier_items' => $panier_items,
+            ]);
 
         
     }

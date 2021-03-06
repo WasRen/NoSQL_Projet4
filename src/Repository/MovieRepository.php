@@ -6,7 +6,7 @@ use App\Entity\Movie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Elasticsearch\ClientBuilder;
-require 'C:\wamp64\www\NoSQL_Projet4\vendor\autoload.php';
+//require 'C:\wamp64\www\NoSQL_Projet4\vendor\autoload.php';
 
 /**
  * @method Movie|null find($id, $lockMode = null, $lockVersion = null)
