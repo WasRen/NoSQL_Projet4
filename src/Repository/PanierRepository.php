@@ -21,6 +21,12 @@ class PanierRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Panier::class);
+        $this->redis = new Predis\Client(array(
+            "scheme" => "tcp",
+            "host" => "localhost",
+            "port" => 6379,
+            "password"=>""
+        ));
     }
 
     public function callRedis() {
@@ -53,43 +59,62 @@ class PanierRepository extends ServiceEntityRepository
         // return $response;
     }
 
-
-    public function addToCart($id, $MovieId) {
-        if ($this->redis) {
-            if(!$this->redis->exists("panier-user".$id))
-            {
-                $this->redis->flushDB();
-                $this->redis->rpush("panier-user".$id, 1);
-                $this->redis->expire("panier-user".$id, 300);
-                $this->redis->rpop("panier-user".$id);
-            }
-            //key: user / value : id movie (list)
-            $data = serialize($MovieId);
-            $this->redis->rpush("panier-user".$id, $data);
-           
-            //key : id movie / value : quantity
-            $this->redis->set($MovieId, 1);
-
-            echo '<script>alert("Item added to cart)</script>';
+    public function getCart($id)
+    {
+        if($this->redis->exists("panier-user".$id))
+        {
+            $response = $this->redis->hgetall("panier-user".$id);
         }
         else {
-            echo '<script>alert("Failed to add this item into your cart. Please try again.")</script>';
+            $response = false;
+        }
+        return $response;
+    }
+
+    public function addToCart($id, $MovieId, $name) 
+    {
+        $arr = array('title' => $name, 'quantity' => 1);
+        $arr = json_encode($arr);
+        if (!$this->redis->exists("panier-user".$id))
+        {
+            $this->redis->hset("panier-user".$id, $MovieId, $arr);
+            $this->redis->expire("panier-user".$id, 300);
+        }
+        else 
+        {
+            if ($this->redis->hexists("panier-user".$id, $MovieId))
+            {
+                echo '<script>alert("Item already added to cart.")</script>';
+            }
+            else 
+            {
+                $this->redis->hset("panier-user".$id, $MovieId, $arr);
+                echo '<script>alert("Item added to cart)</script>';
+            }
         }
     }
 
-    public function incrQuantity($MovieId) {
-        $this->redis->incr($MovieId);
+    public function incrQuantity($id, $MovieId) {
+        $arr = $this->redis->hget("panier-user".$id, $MovieId);
+        $arr = json_decode($arr, true);
+        $arr['quantity']++;
+        $arr = json_encode($arr);
+        $arr = $this->redis->hset("panier-user".$id, $MovieId, $arr);
     }
 
     public function decrQuantity($id, $MovieId) {
-        if ($this->redis->get($MovieId) == 0) 
+        $arr = $this->redis->hget("panier-user".$id, $MovieId);
+        $arr = json_decode($arr, true);
+
+        if ($arr['quantity'] == 1) 
         {
-            $this->redis->lrem("panier-user".$id, $MovieId, 1);
-            $this->redis->del($MovieId);
+            $this->redis->hdel("panier-user".$id, $MovieId);
         }
         else
         {
-            $this->redis->decr($MovieId);
+            $arr['quantity']--;
+            $arr = json_encode($arr);
+            $arr = $this->redis->hset("panier-user".$id, $MovieId, $arr);
         }
     }
 

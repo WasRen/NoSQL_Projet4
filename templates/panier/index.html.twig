@@ -8,26 +8,36 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>actions</th>
+                <th>Id Movie</th>
+                <th>Nom</th>
+                <th>Quantity</th>
             </tr>
         </thead>
         <tbody>
-        {% for panier in paniers %}
-            <tr>
-                <td>{{ panier.id }}</td>
-                <td>
-                    <a href="{{ path('panier_show', {'id': panier.id}) }}">show</a>
-                    <a href="{{ path('panier_edit', {'id': panier.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="2">no records found</td>
-            </tr>
-        {% endfor %}
+            {% for key, value in panier_items %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ value["title"] }}</td>
+                    <td>{{ value["quantity"] }}</td>
+                    <td>
+                        <div class="row justify-content-center">
+                            <div class="md-5">
+                                <button type="button" onclick="location.href='{{ path('panier_decr', {'movie_id' : key}) }}'" class="btn btn-primary btn-lg" style="color:#3B4CCA; ">-</button>
+                            </div>
+                            <div class="md-2">
+
+                            </div>
+                            <div class="md-5">
+                                <button type="button" onclick="location.href='{{ path('panier_incr', {'movie_id' : key}) }}'" class="btn btn-primary btn-lg" style="color:#3B4CCA; ">+</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>    
+            {% else %}
+                <tr>
+                    <td colspan="2">no records found</td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
-
-    <a href="{{ path('panier_new') }}">Create new</a>
 {% endblock %}
