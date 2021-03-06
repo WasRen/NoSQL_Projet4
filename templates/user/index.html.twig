@@ -27,7 +27,12 @@
                 <td>{{ user.email }}</td>
                 <td>{{ user.password }}</td>
                 <td>
+<<<<<<< HEAD
                     
+=======
+                    <a href="{{ path('user_show', {'id': user.id}) }}">show</a>
+                    <a href="{{ path('user_edit', {'id': user.id}) }}">edit</a>
+>>>>>>> master
                 </td>
             </tr>
         {% else %}

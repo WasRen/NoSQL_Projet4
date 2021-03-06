@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Movie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Elasticsearch\ClientBuilder;
+require 'C:\wamp64\www\NoSQL_Projet4\vendor\autoload.php';
 
 /**
  * @method Movie|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,17 +16,26 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MovieRepository extends ServiceEntityRepository
 {
+    public $client;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Movie::class);
+        $client = ClientBuilder::create()
+                                ->setHosts(["http://localhost:9200"])
+                                ->build();
+    }
+
+    function getIndex() {
     }
 
 
-    function callAPI($method, $url, $headers = false, $data = false)
+    function callAPI($method, $url, $headers, $data)
         {
     $curl = curl_init();
     //$url = getAPIUrl()."".$url;
 
+   
     switch ($method) {
         case "POST":
             curl_setopt($curl, CURLOPT_POST, 1);
@@ -33,6 +44,11 @@ class MovieRepository extends ServiceEntityRepository
             break;
         case "PUT":
             curl_setopt($curl, CURLOPT_PUT, 1);
+            break;
+        case "GET":
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+            if ($data)
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
             break;
         default:
             if ($data)
@@ -43,9 +59,14 @@ class MovieRepository extends ServiceEntityRepository
     // curl_setopt($curl, CURLOPT_HTTPAUTH, $auth);
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    dump($data);
+    dump($headers);
+    dump($curl);
     $result = curl_exec($curl);
     curl_close($curl);
     $result = json_decode($result, true);
+    dump($result);
     return $result;
     }
 
