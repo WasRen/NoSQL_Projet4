@@ -89,7 +89,24 @@ class MovieController extends AbstractController
 
      public function addToCart($movieid, PanierRepository $panierRepository, MovieRepository $movieRepository) {
 
-        $panierRepository->addToCart($this->getUser()->getId(), $movieid);
+
+        $data = '{
+            "_source" : [ "title"], 
+            "query" : {
+                "match" : {
+                    "movieid" : ' . $movieid . '
+                }
+            }
+        }';
+        $headers = array("Content-Type: application/json", "Content-Length: " . strlen($data));
+
+        $res = $movieRepository->callAPI("GET", "http://localhost:9200/movies/_doc/_search", $headers, $data);
+
+
+        dump($res['hits']['hits'][0]['_source']['title']);
+
+        $panierRepository->addToCart($this->getUser()->getId(), $movieid, $res['hits']['hits'][0]['_source']['title']);
+
 
         return $this->index($movieRepository);
      }

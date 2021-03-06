@@ -73,6 +73,9 @@ class PanierRepository extends ServiceEntityRepository
 
     public function addToCart($id, $MovieId, $name) 
     {
+
+       // $this->redis->flushAll();
+
         $arr = array('title' => $name, 'quantity' => 1);
         $arr = json_encode($arr);
         if (!$this->redis->exists("panier-user".$id))
