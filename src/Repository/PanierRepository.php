@@ -81,8 +81,16 @@ class PanierRepository extends ServiceEntityRepository
         $this->redis->incr($MovieId);
     }
 
-    public function decrQuantity($MovieId) {
-        $this->redis->decr($MovieId);
+    public function decrQuantity($id, $MovieId) {
+        if ($this->redis->get($MovieId) == 0) 
+        {
+            $this->redis->lrem("panier-user".$id, $MovieId, 1);
+            $this->redis->del($MovieId);
+        }
+        else
+        {
+            $this->redis->decr($MovieId);
+        }
     }
 
     // /**
