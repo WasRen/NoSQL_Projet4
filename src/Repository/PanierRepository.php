@@ -16,13 +16,15 @@ use Predis;
  */
 class PanierRepository extends ServiceEntityRepository
 {
+    private $redis;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Panier::class);
     }
 
-    public function callRedis($id, $MovieId, $quantité) {
-        $redis = new Predis\Client(array(
+    public function callRedis() {
+        $this->redis = new Predis\Client(array(
             "scheme" => "tcp",
             "host" => "localhost",
             "port" => 6379,
@@ -30,25 +32,57 @@ class PanierRepository extends ServiceEntityRepository
         ));
         
 
-        if ($redis){
+        // if ($redis){
 
+        //     $data = serialize($MovieId);
+        //                                                                 // Ajouter IF Vérif pour delete et l'ajout
+        //     $redis->rpush("panier-user".$id , $data);
+        //     $response = $redis->lrange("panier-user".$id, 0, -1);
+
+        //     $redis->set("produit-panier".$MovieId , $quantité);
+            
+        //     $redis->del("panier-userTest".$id); SUPPRIMER DES CHOSES
+            
+            
+            
+        // }else{
+        //     $response = false;
+        // }
+
+
+        // return $response;
+    }
+
+
+    public function addToCart($id, $MovieId) {
+        if ($this->redis) {
+            if(!$this->redis->exists("panier-user".$id))
+            {
+                $this->redis->flushDB();
+                $this->redis->rpush("panier-user".$id, 1);
+                $this->redis->expire("panier-user".$id, 300);
+                $this->redis->rpop("panier-user".$id);
+            }
+            //key: user / value : id movie (list)
             $data = serialize($MovieId);
-                                                                        // Ajouter IF Vérif pour delete et l'ajout
-            $redis->rpush("panier-user".$id , $data);
-            $response = $redis->lrange("panier-user".$id, 0, -1);
+            $this->redis->rpush("panier-user".$id, $data);
+           
+            //key : id movie / value : quantity
+            $this->redis->set($MovieId, 1);
 
-            $redis->set("produit-panier".$MovieId , $quantité);
-            
-            //$redis->del("panier-userTest".$id); SUPPRIMER DES CHOSES
-            
-            
-            
-        }else{
-            $response = false;
+            echo '<script>alert("Item added to cart)</script>';
         }
+        else {
+            echo '<script>alert("Failed to add this item into your cart. Please try again.")</script>';
+        }
+    }
 
+    public function incrQuantity($MovieId) {
+        $this->redis->incr($MovieId);
+    }
 
-        return $response;
+    public function decrQuantity($MovieId) {
+        $this->redis->decr($MovieId);
     }
 
     // /**
