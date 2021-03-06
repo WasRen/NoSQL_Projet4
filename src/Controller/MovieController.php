@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Movie;
 use App\Form\MovieType;
 use App\Repository\MovieRepository;
+use App\Repository\PanierRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,6 +82,18 @@ class MovieController extends AbstractController
             'movies' => $movieRepository->callAPI("GET", "http://localhost:9200/movies/_doc/_search", $headers, $query),
         ]);
     }
+
+    /**
+     *@Route("/add_to_cart/{movieid}", name="ajout_panier", methods={"GET", "POST"})
+     */
+
+     public function addToCart($movieid, PanierRepository $panierRepository, MovieRepository $movieRepository) {
+
+        $panierRepository->addToCart($this->getUser()->getId(), $movieid);
+
+        return $this->index($movieRepository);
+     }
+
 
     /**
      *@Route("/publish", name="publish", methods={"GET", "POST"})

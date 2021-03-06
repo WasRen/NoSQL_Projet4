@@ -6,16 +6,18 @@
     <h1>Movie index</h1>
     <table class="table">
         <thead>
+        <div>
             <tr>
-                <th>Movieid</th>
-                <th>Movie Title </th>
-                <th> Actions <th>
+                <th class="text-center">Movieid</th>
+                <th class="text-center">Movie Title </th>
+                <th class="text-center"> Actions <th>
             </tr>
+        </div>
         </thead>
         <tbody>
         {% for movie in movies.hits.hits %}
             <tr>
-                <td>{{ movie._source.movieid }}</td>
+                <td class="text-center" >{{ movie._source.movieid }}</td>
                 <td>
                     <div class= "row justify-content-center">
                         {{movie._source.title}}
@@ -26,11 +28,8 @@
                         <div class="md-5">
                             <button type="button" onclick="location.href='{{ path('movie_show', {'movieid' : movie._source.movieid}) }}'" class="btn btn-primary btn-lg" style="color:#3B4CCA; ">Detail</button>
                         </div>
-                        <div class="md-2">
-
-                        </div>
                         <div class="md-5">
-                            <button type="button" onclick="location.href='{{ path('movie_index')}}'" class="btn btn-primary btn-lg" style="color:#3B4CCA;" >Editer</button>
+                            <button type="button" onclick="location.href='{{ path('ajout_panier', {'movieid' : movie._source.movieid})}}'" class="btn btn-primary btn-lg" style="color:#3B4CCA;" >Ajouter au Panier</button>
                         </div>
                     </div>
                 </td>
