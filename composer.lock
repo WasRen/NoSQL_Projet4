@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
     "content-hash": "d2a9a1023ac913225144a65194b02218",
-=======
-    "content-hash": "33299232689bc7331e3f1dc58b12028f",
->>>>>>> master
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -1301,13 +1297,6 @@
                 "elasticsearch",
                 "search"
             ],
-<<<<<<< HEAD
-            "support": {
-                "issues": "https://github.com/elastic/elasticsearch-php/issues",
-                "source": "https://github.com/elastic/elasticsearch-php/tree/v7.11.0"
-            },
-=======
->>>>>>> master
             "time": "2021-02-11T11:04:51+00:00"
         },
         {
@@ -1358,12 +1347,6 @@
                 "Guzzle",
                 "stream"
             ],
-<<<<<<< HEAD
-            "support": {
-                "source": "https://github.com/ezimuel/guzzlestreams/tree/3.0.1"
-            },
-=======
->>>>>>> master
             "time": "2020-02-14T23:11:50+00:00"
         },
         {
@@ -1415,12 +1398,6 @@
                 }
             ],
             "description": "Fork of guzzle/RingPHP (abandoned) to be used with elasticsearch-php",
-<<<<<<< HEAD
-            "support": {
-                "source": "https://github.com/ezimuel/ringphp/tree/1.1.2"
-            },
-=======
->>>>>>> master
             "time": "2020-02-14T23:51:21+00:00"
         },
         {
@@ -2244,13 +2221,6 @@
                 "promise",
                 "promises"
             ],
-<<<<<<< HEAD
-            "support": {
-                "issues": "https://github.com/reactphp/promise/issues",
-                "source": "https://github.com/reactphp/promise/tree/v2.8.0"
-            },
-=======
->>>>>>> master
             "time": "2020-05-12T15:16:56+00:00"
         },
         {

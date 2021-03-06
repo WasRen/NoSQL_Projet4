@@ -4,25 +4,6 @@
 
 {% block body %}
     <h1>Movie index</h1>
-<<<<<<< HEAD
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Movieid</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for movie in movies %}
-            <tr>
-                <td>{{ movie.id }}</td>
-                <td>{{ movie.movieid }}</td>
-                <td>
-                    <a href="{{ path('movie_show', {'id': movie.id}) }}">show</a>
-                    <a href="{{ path('movie_edit', {'id': movie.id}) }}">edit</a>
-=======
     <table class="table">
         <thead>
             <tr>
@@ -52,7 +33,6 @@
                             <button type="button" onclick="location.href='{{ path('movie_index')}}'" class="btn btn-primary btn-lg" style="color:#3B4CCA;" >Editer</button>
                         </div>
                     </div>
->>>>>>> master
                 </td>
             </tr>
         {% else %}
@@ -62,9 +42,5 @@
         {% endfor %}
         </tbody>
     </table>
-<<<<<<< HEAD
 
-=======
->>>>>>> master
-    <a href="{{ path('movie_new') }}">Create new</a>
 {% endblock %}
