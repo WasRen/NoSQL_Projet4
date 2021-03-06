@@ -23,21 +23,39 @@ class PanierController extends AbstractController
      */
     public function index(PanierRepository $panierRepository): Response
     {
+        $panier_items = array();
         $response = $panierRepository->getCart($this->getUser()->getId());
         if ($response) 
         {
-            $panier_items = array();
             foreach ($response as $key => $value)
             {
                 $value = json_decode($value, true);
                 $panier_items[$key] = $value;
             }
-            return $this->render('panier/index.html.twig', [
-                'panier_items' => $panier_items,
-            ]);
         }
-        return $this->render('panier/empty.html.twig');   
+        return $this->render('panier/index.html.twig', [
+            'panier_items' => $panier_items,
+        ]);
     }
+
+    /**
+     * @Route("/incr/{movie_id}", name="panier_incr", methods={"GET", "POST"})
+     */
+    public function cartIncr(PanierRepository $panierRepository, $movie_id): Response
+    {
+        $panierRepository->incrQuantity($this->getUser()->getId(), $movie_id);
+        return $this->redirectToRoute('panier_index');
+    }
+
+    /**
+     * @Route("/decr/{movie_id}", name="panier_decr", methods={"GET", "POST"})
+     */
+    public function cartDecr(PanierRepository $panierRepository, $movie_id): Response
+    {
+        $panierRepository->decrQuantity($this->getUser()->getId(), $movie_id);
+        return $this->redirectToRoute('panier_index');
+    }
+
 
     /**
      *  @Route("/test", name="afficher_panier")

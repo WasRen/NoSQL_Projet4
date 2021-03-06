@@ -94,32 +94,6 @@ class PanierRepository extends ServiceEntityRepository
         }
     }
 
-    // public function addToCart($id, $MovieId, $name) {
-    //     if ($this->redis) {
-    //         if(!$this->redis->exists("panier-user".$id))
-    //         {               
-    //             $this->redis->hmset("panier-user".$id, array());
-    //             $this->redis->expire("panier-user".$id, 300);
-    //         }
-    //         if ($this->redis->hexists("panier-user".$id, $MovieId)) 
-    //         {
-    //             $this->redis->hincrby($MovieId, "quantity", 1);
-    //         }
-    //         else 
-    //         {
-    //             $this->redis->rpush("panier-user".$id, $this->redis->hmset($MovieId, array(
-    //                 "name" => $name,
-    //                 "quantity" => 1
-    //                 )));
-    //         }
-        
-    //         echo '<script>alert("Item added to cart)</script>';
-    //     }
-    //     else {
-    //         echo '<script>alert("Failed to add this item into your cart. Please try again.")</script>';
-    //     }
-    // }
-
     public function incrQuantity($id, $MovieId) {
         $arr = $this->redis->hget("panier-user".$id, $MovieId);
         $arr = json_decode($arr, true);
@@ -132,7 +106,7 @@ class PanierRepository extends ServiceEntityRepository
         $arr = $this->redis->hget("panier-user".$id, $MovieId);
         $arr = json_decode($arr, true);
 
-        if ($arr['quantity'] == 0) 
+        if ($arr['quantity'] == 1) 
         {
             $this->redis->hdel("panier-user".$id, $MovieId);
         }

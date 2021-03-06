@@ -19,6 +19,19 @@
                     <td>{{ key }}</td>
                     <td>{{ value["title"] }}</td>
                     <td>{{ value["quantity"] }}</td>
+                    <td>
+                        <div class="row justify-content-center">
+                            <div class="md-5">
+                                <button type="button" onclick="location.href='{{ path('panier_decr', {'movie_id' : key}) }}'" class="btn btn-primary btn-lg" style="color:#3B4CCA; ">-</button>
+                            </div>
+                            <div class="md-2">
+
+                            </div>
+                            <div class="md-5">
+                                <button type="button" onclick="location.href='{{ path('panier_incr', {'movie_id' : key}) }}'" class="btn btn-primary btn-lg" style="color:#3B4CCA; ">+</button>
+                            </div>
+                        </div>
+                    </td>
                 </tr>    
             {% else %}
                 <tr>
