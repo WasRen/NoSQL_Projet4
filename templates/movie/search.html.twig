@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Search Movies{% endblock %}
+
+{% block body %}
+    <h1>Search movies</h1>
+
+    {{ include('movie/_form.html.twig') }}
+
+    <a href="{{ path('movie_index') }}">back to list</a>
+{% endblock %}

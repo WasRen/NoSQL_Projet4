@@ -35,6 +35,54 @@ class MovieController extends AbstractController
     }
 
     /**
+     * @Route("/search", name="movie_search", methods={"GET", "POST"})
+     */
+    public function search(Request $request, MovieRepository $movieRepository): Response
+    {
+        $genres = array("Drama", "Action", "Animation", "Fantasy", "Comedy", "Horror", "Children", "Documentary", "Adventure", "Romance", "Sci-Fi", "War", "IMAX", "Crime", "Mystery", "(no genres listed)");
+       
+        $movie = new Movie();
+        $form = $this->createForm(MovieType::class, $movie, array('genres' => $genres));
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            // récupérer les champs renseigné
+            // créer la query dynamiquement
+            $query = array();
+            if ($title = $form->get('title')->getData()) {
+                array_push($query,' {  "match" : { "title" : "' . $title . '" } }');
+            }
+            if ($price = $form->get('price')->getData()) {
+                array_push($query,' {  "match" : { "price" : ' . $price . ' } }');
+            }
+            if ($ranking = $form->get('ranking')->getData()) {
+                array_push($query,' {  "match" : { "rotten_tomatoes" : ' . $ranking. ' } }');
+            }
+            if ($genre = $form->get('genre')->getData()) {
+                array_push($query,' {  "match" : { "genre" : "' . $genre . '" } }');
+            }
+            
+            $query_str = implode(",", $query);
+            $data = '{ "query" : { "bool" : { "must" : ['. $query_str .'] } } }';
+            $headers = array("Content-Type: application/json", "Content-Length: " . strlen($data));
+
+            return $this->render('movie/index.html.twig', [
+                'movies' => $movieRepository->callAPI("GET", "http://localhost:9200/movies/_doc/_search", $headers, $data),
+            ]);
+        }
+
+        return $this->render('movie/search.html.twig', [
+            'movie' => $movie,
+            'form' => $form->createView(),
+        ]);
+        $headers = array("Content-Type: application/json", "Content-Length: " . strlen($data));
+
+        return $this->render('movie/index.html.twig', [
+            'movies' => $movieRepository->callAPI("GET", "http://localhost:9200/movies/_doc/_search", $headers, $query),
+        ]);
+    }
+
+    /**
      *@Route("/publish", name="publish", methods={"GET", "POST"})
      */
     public function publish(MovieRepository $movieRepository) : Response {
@@ -74,25 +122,25 @@ class MovieController extends AbstractController
     /**
      * @Route("/new", name="movie_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
-    {
-        $movie = new Movie();
-        $form = $this->createForm(MovieType::class, $movie);
-        $form->handleRequest($request);
+    // public function new(Request $request): Response
+    // {
+    //     $movie = new Movie();
+    //     $form = $this->createForm(MovieType::class, $movie);
+    //     $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($movie);
-            $entityManager->flush();
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         $entityManager = $this->getDoctrine()->getManager();
+    //         $entityManager->persist($movie);
+    //         $entityManager->flush();
 
-            return $this->redirectToRoute('movie_index');
-        }
+    //         return $this->redirectToRoute('movie_index');
+    //     }
 
-        return $this->render('movie/new.html.twig', [
-            'movie' => $movie,
-            'form' => $form->createView(),
-        ]);
-    }
+    //     return $this->render('movie/new.html.twig', [
+    //         'movie' => $movie,
+    //         'form' => $form->createView(),
+    //     ]);
+    // }
 
     /**
      * @Route("/{movieid}", name="movie_show", methods={"GET"})
@@ -116,24 +164,24 @@ class MovieController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="movie_edit", methods={"GET","POST"})
+     * @Route("/{movieid}/edit", name="movie_edit", methods={"GET","POST"})
      */
-    // public function edit(Request $request, Movie $movie): Response
-    // {
-    //     $form = $this->createForm(MovieType::class, $movie);
-    //     $form->handleRequest($request);
+    public function edit(Request $request, Movie $movie): Response
+    {
+        $form = $this->createForm(MovieType::class, $movie);
+        $form->handleRequest($request);
 
-    //     if ($form->isSubmitted() && $form->isValid()) {
-    //         $this->getDoctrine()->getManager()->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
 
-    //         return $this->redirectToRoute('movie_index');
-    //     }
+            return $this->redirectToRoute('movie_index');
+        }
 
-    //     return $this->render('movie/edit.html.twig', [
-    //         'movie' => $movie,
-    //         'form' => $form->createView(),
-    //     ]);
-    // }
+        return $this->render('movie/edit.html.twig', [
+            'movie' => $movie,
+            'form' => $form->createView(),
+        ]);
+    }
 
     /**
      * @Route("/{id}", name="movie_delete", methods={"DELETE"})
