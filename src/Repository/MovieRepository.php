@@ -60,13 +60,13 @@ class MovieRepository extends ServiceEntityRepository
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-    //dump($data);
-    //dump($headers);
-    //dump($curl);
+    ////dump($data);
+    ////dump($headers);
+    ////dump($curl);
     $result = curl_exec($curl);
     curl_close($curl);
     $result = json_decode($result, true);
-    //dump($result);
+    ////dump($result);
     return $result;
     }
 

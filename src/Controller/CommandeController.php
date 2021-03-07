@@ -9,9 +9,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/commande")
+ * @IsGranted("ROLE_USER")
  */
 class CommandeController extends AbstractController
 {
@@ -32,7 +35,7 @@ class CommandeController extends AbstractController
         $result = $qb->getResult();
         
         $commandes = $result;
-        dump($commandes);
+        //dump($commandes);
         return $this->render('commande/index.html.twig', [
             'commandes' => $commandes,
         ]);

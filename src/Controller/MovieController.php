@@ -10,14 +10,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/movie")
+ * 
  */
 class MovieController extends AbstractController
 {
     /**
      * @Route("/index", name="movie_index", methods={"GET"})
+     * @IsGranted("ROLE_USER")
      */
     public function index(MovieRepository $movieRepository): Response
     {
@@ -37,6 +41,7 @@ class MovieController extends AbstractController
 
     /**
      * @Route("/search", name="movie_search", methods={"GET", "POST"})
+     * @IsGranted("ROLE_USER")
      */
     public function search(Request $request, MovieRepository $movieRepository): Response
     {
@@ -85,6 +90,7 @@ class MovieController extends AbstractController
 
     /**
      *@Route("/add_to_cart/{movieid}", name="ajout_panier", methods={"GET", "POST"})
+     *@IsGranted("ROLE_USER")
      */
 
      public function addToCart($movieid, PanierRepository $panierRepository, MovieRepository $movieRepository) {
@@ -103,7 +109,7 @@ class MovieController extends AbstractController
         $res = $movieRepository->callAPI("GET", "http://localhost:9200/movies/_doc/_search", $headers, $data);
 
 
-        dump($res['hits']['hits'][0]['_source']['title']);
+        ////dump($res['hits']['hits'][0]['_source']['title']);
 
         $panierRepository->addToCart($this->getUser()->getId(), $movieid, $res['hits']['hits'][0]['_source']['title']);
 
@@ -114,17 +120,18 @@ class MovieController extends AbstractController
 
     /**
      *@Route("/publish", name="publish", methods={"GET", "POST"})
+     *@IsGranted("ROLE_USER")
      */
     public function publish(MovieRepository $movieRepository) : Response {
 
         // $fileReader = fopen(__DIR__."/MOVIE_DB.txt", 'r');
         // $file_correct = fopen(__DIR__. "/MOVIE_DB_correct.txt", 'w');
         // $i = 1;
-        // var_dump("HELLLOO");
-        // // var_dump(json_decode($fileReader));
+        // var_//dump("HELLLOO");
+        // // var_//dump(json_decode($fileReader));
         // while (($line = fgets($fileReader)) !== false) {
         //     $index = '{ "index": { "_id": '.$i.'}}';
-        //     var_dump($index);
+        //     var_//dump($index);
         //     fwrite($file_correct, $index . "\n");
         //     fwrite($file_correct, $line);
         //     $i++;
@@ -174,6 +181,7 @@ class MovieController extends AbstractController
 
     /**
      * @Route("/{movieid}", name="movie_show", methods={"GET"})
+     * @IsGranted("ROLE_USER")
      */
     public function show($movieid, MovieRepository $movieRepository): Response
     {

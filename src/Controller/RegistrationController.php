@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class RegistrationController extends AbstractController
 {
@@ -32,12 +34,13 @@ class RegistrationController extends AbstractController
                     $form->get('password')->getData()
                 )
             );
+            $user->setRoles(['ROLE_USER']);
 
             $entityManager = $this->getDoctrine()->getManager();
             try {
                 $entityManager->persist($user);
                 $entityManager->flush();
-                return $this->redirectToRoute('user_index');
+                return $this->redirectToRoute('homepage');
             }
             catch (UniqueConstraintViolationException $exception) {
                 return $this->render('registration/register_error.html.twig', [

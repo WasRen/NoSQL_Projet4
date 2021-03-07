@@ -20,7 +20,21 @@
                 <td>{{ commande.date ? commande.date|date('Y-m-d') : '' }}</td>
                 
                 <td>
-                    
+                    {% for produit in commande.produits %}
+                        <div class= "row>
+                            <div class = "col"
+                                <p> {{produit.title}} </p>
+                            </div>
+                            <div class = "col"
+                                <p> {{produit.quantity}} </p>
+                            </div>
+                        </div>
+
+                        {% else %}
+                    <p>
+                        <td colspan="4">no products found</td>
+                    </p>
+                    {% endfor %}
                 </td>
             </tr>
         {% else %}

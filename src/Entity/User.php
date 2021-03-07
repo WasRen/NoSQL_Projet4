@@ -40,6 +40,14 @@ class User implements UserInterface
     private $email;
 
     /**
+     * @var json
+     *
+     * @ORM\Column(name="roles", type="json", nullable=false)
+     */
+    private $roles;
+
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $password;
@@ -121,7 +129,12 @@ class User implements UserInterface
 
     public function getRoles(): ?array
     {
-        return [null];
+        return $this->roles;
+    }
+
+    public function setRoles($array)
+    {
+       $this->roles = $array;
     }
 
 

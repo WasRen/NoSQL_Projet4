@@ -20,6 +20,7 @@ class PanierRepository extends ServiceEntityRepository
 
     public function __construct(ManagerRegistry $registry)
     {
+
         parent::__construct($registry, Panier::class);
         $this->redis = new Predis\Client(array(
             "scheme" => "tcp",
@@ -27,6 +28,9 @@ class PanierRepository extends ServiceEntityRepository
             "port" => 6379,
             "password"=>""
         ));
+        // A DECOMMENTER 1 ET 1 SEULE FOIS A LA PREMIERE UTILISATION POUR RESET LE CACHE REDIS
+        //$this->redis->flushAll();
+
     }
 
     public function callRedis() {
@@ -74,13 +78,14 @@ class PanierRepository extends ServiceEntityRepository
     public function addToCart($id, $MovieId, $name) 
     {
 
-       // $this->redis->flushAll();
+       //$this->redis->flushAll();
 
         $arr = array('title' => $name, 'quantity' => 1);
         $arr = json_encode($arr);
         if (!$this->redis->exists("panier-user".$id))
         {
             $this->redis->hset("panier-user".$id, $MovieId, $arr);
+            //dump($MovieId);
             $this->redis->expire("panier-user".$id, 300);
         }
         else 
@@ -92,6 +97,7 @@ class PanierRepository extends ServiceEntityRepository
             else 
             {
                 $this->redis->hset("panier-user".$id, $MovieId, $arr);
+                //dump($MovieId);
                 $this->redis->expire("panier-user".$id, 300);
                 echo '<script>alert("L\'article ajouté")</script>';
             }

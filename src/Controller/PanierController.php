@@ -14,9 +14,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/panier")
+ * @IsGranted("ROLE_USER")
  */
 class PanierController extends AbstractController
 {
@@ -27,6 +30,7 @@ class PanierController extends AbstractController
     {
         $panier_items = array();
         $response = $panierRepository->getCart($this->getUser()->getId());
+        //dump($response);
         if ($response) 
         {
             foreach ($response as $key => $value)
@@ -35,6 +39,7 @@ class PanierController extends AbstractController
                 $panier_items[$key] = $value;
             }
         }
+        //dump($panier_items);
         return $this->render('panier/index.html.twig', [
             'panier_items' => $panier_items,
         ]);
@@ -59,39 +64,39 @@ class PanierController extends AbstractController
     }
 
 
-    /**
-     *  @Route("/test", name="afficher_panier")
-     */
-    public function test(PanierRepository $panierRepository): Response
-    {
-        $panierRepository->callRedis();
-        $movie = new Movie(); // importer les movies 
-        $movie->setMovieId(1);
-        $movie->setMovietitle("testNom");
-        $panierRepository->addToCart($this->getUser()->getId(), $movie->getMovieid(), $movie->getMovietitle());
-        $movie2 = new Movie(); // importer les movies 
-        $movie2->setMovieId(2);
-        $movie2->setMovietitle("testNom2");
-        $panierRepository->addToCart($this->getUser()->getId(), $movie2->getMovieid(), $movie2->getMovietitle());
-        $call = $panierRepository->getCart($this->getUser()->getId());
-        $res = array();
-        // foreach ($call as $key => $value)
-        // {
-        //     $value = json_decode($value, true);
-        //     $res[$key] = $value;
-        // }
-        $panier_items = array();
-            foreach ($call as $key => $value)
-            {
-                $value = json_decode($value, true);
-                $panier_items[$key] = $value;
-            }
-            return $this->render('panier/index.html.twig', [
-                'panier_items' => $panier_items,
-            ]);
+    // /**
+    //  *  @Route("/test", name="afficher_panier")
+    //  */
+    // public function test(PanierRepository $panierRepository): Response
+    // {
+    //     $panierRepository->callRedis();
+    //     $movie = new Movie(); // importer les movies 
+    //     $movie->setMovieId(1);
+    //     $movie->setMovietitle("testNom");
+    //     $panierRepository->addToCart($this->getUser()->getId(), $movie->getMovieid(), $movie->getMovietitle());
+    //     $movie2 = new Movie(); // importer les movies 
+    //     $movie2->setMovieId(2);
+    //     $movie2->setMovietitle("testNom2");
+    //     $panierRepository->addToCart($this->getUser()->getId(), $movie2->getMovieid(), $movie2->getMovietitle());
+    //     $call = $panierRepository->getCart($this->getUser()->getId());
+    //     $res = array();
+    //     // foreach ($call as $key => $value)
+    //     // {
+    //     //     $value = json_decode($value, true);
+    //     //     $res[$key] = $value;
+    //     // }
+    //     $panier_items = array();
+    //         foreach ($call as $key => $value)
+    //         {
+    //             $value = json_decode($value, true);
+    //             $panier_items[$key] = $value;
+    //         }
+    //         return $this->render('panier/index.html.twig', [
+    //             'panier_items' => $panier_items,
+    //         ]);
 
         
-    }
+    // }
 
     /**
      * @Route("/new", name="panier_new", methods={"GET","POST"})
@@ -175,7 +180,7 @@ class PanierController extends AbstractController
             
             
             $panier_items = array();
-            dump($call);
+            //dump($call);
             
             
             foreach ($call as $key => $value)
