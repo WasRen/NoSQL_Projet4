@@ -2,7 +2,7 @@
 
 -------- POUR INITITALISER LES DONNEES -------
 
-Télécharger la collection et l'importer dans POSTMAN
+Télécharger la collection (movie-db.postmancollection à la racine) et l'importer dans POSTMAN
 Executer les réquêtes à la suite :
 Suppression de l'index movies
 /DEL - DELETE MOVIES
