@@ -191,7 +191,7 @@ class PanierController extends AbstractController
         }
         
 
-        return $this->redirectToRoute('panier_index');
+        return $this->redirectToRoute('commande_index');
     }
 
 
