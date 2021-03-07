@@ -32,12 +32,14 @@
                             </div>
                         </div>
                     </td>
-                </tr>    
+                </tr>
+                    
             {% else %}
                 <tr>
                     <td colspan="2">Panier est vide ou a expiré</td>
                 </tr>
             {% endfor %}
+            <button type="button" onclick="location.href='{{ path('passerCommande') }}'" class="btn btn-primary btn-lg" style="color:#3B4CCA; ">Commander</button>
         </tbody>
     </table>
 {% endblock %}

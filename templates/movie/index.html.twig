@@ -15,6 +15,7 @@
         </div>
         </thead>
         <tbody>
+        {% if movies %}
         {% for movie in movies.hits.hits %}
             <tr>
                 <td class="text-center" >{{ movie._source.movieid }}</td>
@@ -39,6 +40,7 @@
                 <td colspan="3">no records found</td>
             </tr>
         {% endfor %}
+        {% endif %}
         </tbody>
     </table>
 

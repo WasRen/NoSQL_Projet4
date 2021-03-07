@@ -138,6 +138,11 @@ class PanierRepository extends ServiceEntityRepository
         }    
     }
 
+    public function deleteCart($idUser){
+        $this->redis->del("panier-user".$idUser);
+
+    }
+
     // /**
     //  * @return Panier[] Returns an array of Panier objects
     //  */

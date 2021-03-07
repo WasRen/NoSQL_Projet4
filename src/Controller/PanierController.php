@@ -2,16 +2,18 @@
 
 namespace App\Controller;
 
-use App\Entity\Panier;
+use RedisException;
 use App\Entity\Movie;
+use App\Entity\Panier;
+use DateTimeInterface;
+use App\Entity\Commande;
 use App\Form\PanierType;
+use AppBundle\Util\RedisHelper;
 use App\Repository\PanierRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use AppBundle\Util\RedisHelper;
-use RedisException;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/panier")
@@ -157,4 +159,40 @@ class PanierController extends AbstractController
 
         return $this->redirectToRoute('panier_index');
     }
+
+    /**
+     * @Route("/panier/commande", name="passerCommande", methods={"GET", "POST"})
+     */
+    public function passerCommande(PanierRepository $panierRepository){
+        $call = $panierRepository->getCart($this->getUser()->getId());
+        $em = $this->getDoctrine()->getManager();
+        if ($call){
+            $commande = new Commande();
+
+            $datedujour = date("m.d.y");
+            $commande->setDate($datedujour);
+            $commande->setUser($this->getUser());
+            
+            
+            $panier_items = array();
+            dump($call);
+            
+            
+            foreach ($call as $key => $value)
+                {
+                    $value = json_decode($value, true);
+                    $panier_items[$key] = $value;
+            }
+            $commande->setProduits($panier_items);
+
+            $em->persist($commande);
+            $em->flush();
+            $panierRepository->deleteCart($this->getUser()->getId());
+        }
+        
+
+        return $this->redirectToRoute('commande_index');
+    }
+
+
 }
