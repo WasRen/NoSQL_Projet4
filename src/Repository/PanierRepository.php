@@ -84,38 +84,55 @@ class PanierRepository extends ServiceEntityRepository
         {
             if ($this->redis->hexists("panier-user".$id, $MovieId))
             {
-                echo '<script>alert("Item already added to cart.")</script>';
+                echo '<script>alert("L\'article est déjà dans le panier")</script>';
             }
             else 
             {
                 $this->redis->hset("panier-user".$id, $MovieId, $arr);
-                echo '<script>alert("Item added to cart)</script>';
+                $this->redis->expire("panier-user".$id, 300);
+                echo '<script>alert("L\'article ajouté")</script>';
             }
         }
     }
 
     public function incrQuantity($id, $MovieId) {
-        $arr = $this->redis->hget("panier-user".$id, $MovieId);
-        $arr = json_decode($arr, true);
-        $arr['quantity']++;
-        $arr = json_encode($arr);
-        $arr = $this->redis->hset("panier-user".$id, $MovieId, $arr);
-    }
-
-    public function decrQuantity($id, $MovieId) {
-        $arr = $this->redis->hget("panier-user".$id, $MovieId);
-        $arr = json_decode($arr, true);
-
-        if ($arr['quantity'] == 1) 
+        if ($this->redis->exists("panier-user".$id))
         {
-            $this->redis->hdel("panier-user".$id, $MovieId);
+            $arr = $this->redis->hget("panier-user".$id, $MovieId);
+            $arr = json_decode($arr, true);
+            $arr['quantity']++;
+            $arr = json_encode($arr);
+            $arr = $this->redis->hset("panier-user".$id, $MovieId, $arr);
+            $this->redis->expire("panier-user".$id, 300);
         }
         else
         {
-            $arr['quantity']--;
-            $arr = json_encode($arr);
-            $arr = $this->redis->hset("panier-user".$id, $MovieId, $arr);
+            echo '<script>alert("Votre panier a expiré")</script>';
         }
+    }
+
+    public function decrQuantity($id, $MovieId) {
+        if ($this->redis->exists("panier-user".$id))
+        {
+            $arr = $this->redis->hget("panier-user".$id, $MovieId);
+            $arr = json_decode($arr, true);
+
+            if ($arr['quantity'] == 1) 
+            {
+                $this->redis->hdel("panier-user".$id, $MovieId);
+            }
+            else
+            {
+                $arr['quantity']--;
+                $arr = json_encode($arr);
+                $arr = $this->redis->hset("panier-user".$id, $MovieId, $arr);
+                $this->redis->expire("panier-user".$id, 300);
+            }
+        }
+        else
+        {
+            echo '<script>alert("Votre panier a expiré")</script>';
+        }    
     }
 
     // /**
